@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Omok</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sky-container">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+    </div>
+    
+    <div class="game-container">
+        <h1>Sky Omok</h1>
+        <div class="controls">
+            <button id="restartBtn" class="btn">New Game</button>
+            <button id="saveBtn" class="btn">Save Game</button>
+            <button id="shareBtn" class="btn">Share URL</button>
+            <div class="recording-controls">
+                <button id="recordBtn" class="btn record-btn">Start Recording (Live)</button>
+                <button id="generateHighlightBtn" class="btn" style="display:none;">Generate Highlight</button>
+                <button id="downloadVideoBtn" class="btn" disabled>Download Video</button>
+            </div>
+        </div>
+        <div class="board-wrapper">
+            <canvas id="omokBoard" width="600" height="600"></canvas>
+        </div>
+        <div id="status" class="status-bar">Player Black's Turn</div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
