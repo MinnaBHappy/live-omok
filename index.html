@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오목 (Omok) - Five in a Row</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Sky Background -->
+    <div class="sky-background">
+        <div class="clouds-container">
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+            <div class="cloud cloud-4"></div>
+            <div class="cloud cloud-5"></div>
+            <div class="cloud cloud-6"></div>
+            <div class="cloud cloud-7"></div>
+            <div class="cloud cloud-8"></div>
+        </div>
+        <div class="sun"></div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div class="game-wrapper">
+        <header class="game-header">
+            <h1>오목 <span class="subtitle">Five in a Row</span></h1>
+        </header>
+
+        <div class="game-container">
+            <!-- Game Info Panel -->
+            <div class="info-panel left-panel">
+                <div class="player-info black-player">
+                    <div class="stone-indicator black-stone"></div>
+                    <span class="player-label">흑돌 (Black)</span>
+                    <span class="capture-count" id="black-captures">0</span>
+                </div>
+                <div class="turn-indicator" id="turn-indicator">
+                    <span>차례: </span>
+                    <span id="current-turn">흑돌</span>
+                </div>
+                <div class="move-counter">
+                    <span>수: </span>
+                    <span id="move-count">0</span>
+                </div>
+            </div>
+
+            <!-- Omok Board -->
+            <div class="board-container">
+                <div class="board-shadow"></div>
+                <div class="board-frame">
+                    <canvas id="omok-board"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="info-panel right-panel">
+                <div class="player-info white-player">
+                    <div class="stone-indicator white-stone"></div>
+                    <span class="player-label">백돌 (White)</span>
+                    <span class="capture-count" id="white-captures">0</span>
+                </div>
+                
+                <div class="game-controls">
+                    <button id="new-game-btn" class="control-btn">
+                        <span class="btn-icon">🎮</span>
+                        새 게임
+                    </button>
+                    <button id="undo-btn" class="control-btn">
+                        <span class="btn-icon">↩️</span>
+                        무르기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recording & Share Controls -->
+        <div class="recording-controls">
+            <div class="recording-section">
+                <h3>🎬 게임 기록</h3>
+                <div class="recording-buttons">
+                    <button id="replay-btn" class="action-btn">
+                        <span>▶️</span> 리플레이
+                    </button>
+                    <button id="record-video-btn" class="action-btn highlight">
+                        <span>🎥</span> 하이라이트 영상
+                    </button>
+                </div>
+                <div class="speed-control">
+                    <label for="replay-speed">재생 속도:</label>
+                    <select id="replay-speed">
+                        <option value="2000">느림 (2초)</option>
+                        <option value="1000" selected>보통 (1초)</option>
+                        <option value="500">빠름 (0.5초)</option>
+                        <option value="200">매우 빠름 (0.2초)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="share-section">
+                <h3>💾 저장 & 공유</h3>
+                <div class="share-buttons">
+                    <button id="save-local-btn" class="action-btn">
+                        <span>💾</span> 로컬 저장
+                    </button>
+                    <button id="load-local-btn" class="action-btn">
+                        <span>📂</span> 불러오기
+                    </button>
+                    <button id="share-url-btn" class="action-btn">
+                        <span>🔗</span> URL 공유
+                    </button>
+                </div>
+                <input type="file" id="load-file-input" accept=".json" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Move History -->
+        <div class="move-history-container">
+            <h3>📜 기보 (Move History)</h3>
+            <div class="move-history" id="move-history"></div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal" id="win-modal">
+        <div class="modal-content">
+            <div class="winner-announcement">
+                <div class="winner-stone" id="winner-stone"></div>
+                <h2 id="winner-text">승리!</h2>
+            </div>
+            <div class="modal-buttons">
+                <button id="modal-replay-btn" class="modal-btn">리플레이 보기</button>
+                <button id="modal-record-btn" class="modal-btn highlight">하이라이트 영상</button>
+                <button id="modal-share-btn" class="modal-btn">게임 공유</button>
+                <button id="modal-new-game-btn" class="modal-btn primary">새 게임</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recording Progress Modal -->
+    <div class="modal" id="recording-modal">
+        <div class="modal-content recording-progress">
+            <h2>🎥 하이라이트 영상 생성 중...</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="recording-progress"></div>
+            </div>
+            <p id="recording-status">준비 중...</p>
+            <button id="cancel-recording-btn" class="modal-btn">취소</button>
+        </div>
+    </div>
+
+    <!-- Replay Overlay -->
+    <div class="replay-overlay" id="replay-overlay">
+        <div class="replay-controls">
+            <span class="replay-label">🔄 리플레이 중...</span>
+            <span class="replay-move" id="replay-move-info">0 / 0</span>
+            <button id="stop-replay-btn" class="stop-btn">중지</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
